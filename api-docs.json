@@ -12,6 +12,10 @@
   ],
   "tags": [
     {
+      "name": "Authentication",
+      "description": "Authentication API endpoints"
+    },
+    {
       "name": "Payments",
       "description": "Endpoints for managing payment operations"
     },
@@ -689,10 +693,13 @@
     "/api/auth/register": {
       "post": {
         "tags": [
-          "auth-controller"
+          "Authentication"
         ],
+        "summary": "User registration",
+        "description": "Registers a new user account",
         "operationId": "register",
         "requestBody": {
+          "description": "User registration details",
           "content": {
             "application/json": {
               "schema": {
@@ -704,12 +711,36 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successfully registered",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthResponse"
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - User already exists",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Something went wrong on the server",
+            "content": {
+              "application/json": {
+
               }
             }
           }
@@ -719,10 +750,13 @@
     "/api/auth/refresh": {
       "post": {
         "tags": [
-          "auth-controller"
+          "Authentication"
         ],
+        "summary": "Refresh access token",
+        "description": "Generates a new access token using a refresh token",
         "operationId": "refreshToken",
         "requestBody": {
+          "description": "Refresh token request",
           "content": {
             "application/json": {
               "schema": {
@@ -734,12 +768,36 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "New access token generated",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RefreshTokenResponse"
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or expired refresh token",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Something went wrong on the server",
+            "content": {
+              "application/json": {
+
               }
             }
           }
@@ -749,10 +807,13 @@
     "/api/auth/logout": {
       "post": {
         "tags": [
-          "auth-controller"
+          "Authentication"
         ],
+        "summary": "User logout",
+        "description": "Invalidates the user's refresh token",
         "operationId": "logout",
         "requestBody": {
+          "description": "Logout request containing refresh token",
           "content": {
             "application/json": {
               "schema": {
@@ -764,12 +825,28 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successfully logged out",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LogoutResponse"
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Something went wrong on the server",
+            "content": {
+              "application/json": {
+
               }
             }
           }
@@ -779,10 +856,13 @@
     "/api/auth/login": {
       "post": {
         "tags": [
-          "auth-controller"
+          "Authentication"
         ],
+        "summary": "User login",
+        "description": "Authenticates a user and returns JWT tokens",
         "operationId": "login",
         "requestBody": {
+          "description": "Login credentials",
           "content": {
             "application/json": {
               "schema": {
@@ -794,12 +874,36 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successfully authenticated",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthResponse"
                 }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Something went wrong on the server",
+            "content": {
+              "application/json": {
+
               }
             }
           }
