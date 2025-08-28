@@ -12,6 +12,10 @@
   ],
   "tags": [
     {
+      "name": "Public Company Subscriptions",
+      "description": "Public endpoints for company subscription information"
+    },
+    {
       "name": "Authentication",
       "description": "Authentication API endpoints"
     },
@@ -834,7 +838,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateCompanyRequest"
+                "$ref": "#/components/schemas/CompanyPayloadRequest"
               }
             }
           },
@@ -1478,7 +1482,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCompanyRequest"
+                "$ref": "#/components/schemas/CompanyPayloadRequest"
               }
             }
           },
@@ -1864,6 +1868,98 @@
           },
           "400": {
             "description": "Invalid file or membership required",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Not company owner",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/companies/{id}/gallery-images": {
+      "patch": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "Update company gallery images",
+        "description": "Updates the gallery images of a company owned by the authenticated user",
+        "operationId": "updateCompanyGalleryImages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Company ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "galleryImages",
+            "in": "query",
+            "description": "Gallery image files",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gallery images updated successfully",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid files or membership required",
             "content": {
               "*/*": {
                 "schema": {
@@ -2685,6 +2781,44 @@
         ]
       }
     },
+    "/api/companies/public/{companyId}/subscription": {
+      "get": {
+        "tags": [
+          "Public Company Subscriptions"
+        ],
+        "summary": "Get company subscription (public)",
+        "description": "Retrieves the membership plan type for a company without exposing sensitive data",
+        "operationId": "getCompanySubscription",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "path",
+            "description": "ID of the company to get subscription for",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCompanySubscriptionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active subscription found for the company"
+          }
+        }
+      }
+    },
     "/api/companies/public/ids": {
       "get": {
         "tags": [
@@ -2973,48 +3107,83 @@
           }
         }
       },
-      "UpdateCompanyRequest": {
+      "Address": {
+
+      },
+      "Branding": {
         "type": "object",
         "properties": {
+          "logo": {
+            "type": "string"
+          },
+          "coverImage": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "galleryImages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CompanyPayloadRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
           "name": {
+            "type": "string"
+          },
+          "foundedDate": {
             "type": "string",
-            "maxLength": 100,
-            "minLength": 2
+            "format": "date"
           },
           "type": {
             "type": "string"
+          },
+          "storageType": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
           },
           "email": {
             "type": "string"
           },
           "phone": {
-            "type": "string",
-            "pattern": "^\\+?[1-9]\\d{1,14}$"
+            "type": "string"
           },
           "businessName": {
             "type": "string"
           },
           "rut": {
-            "type": "string",
-            "maxLength": 20,
-            "minLength": 16
+            "type": "string"
           },
           "DV": {
-            "type": "string",
-            "maxLength": 3,
-            "minLength": 1
-          },
-          "foundedDate": {
-            "type": "string",
-            "format": "date"
+            "type": "string"
           },
           "primaryActivity": {
             "type": "string"
           },
           "branchCount": {
             "type": "integer",
-            "format": "int32",
-            "minimum": 0
+            "format": "int32"
           },
           "province": {
             "type": "string"
@@ -3023,21 +3192,62 @@
             "type": "string"
           },
           "address": {
-            "type": "string"
+            "$ref": "#/components/schemas/Address"
           },
           "website": {
-            "type": "string",
-            "pattern": "^(https?://)?(www\\.)?[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,6}(\\.[a-zA-Z]{2,6})?$"
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "maxLength": 500,
-            "minLength": 0
+            "type": "string"
           },
           "logo": {
             "type": "string"
           },
           "coverImage": {
+            "type": "string"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact"
+          },
+          "legalInfo": {
+            "$ref": "#/components/schemas/LegalInfo"
+          },
+          "branding": {
+            "$ref": "#/components/schemas/Branding"
+          },
+          "views": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          }
+        }
+      },
+      "LegalInfo": {
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string"
+          },
+          "rut": {
+            "type": "string"
+          },
+          "DV": {
+            "type": "string"
+          },
+          "primaryActivity": {
             "type": "string"
           }
         }
@@ -3081,6 +3291,17 @@
             "type": "string",
             "description": "Description",
             "example": "Leading tech company..."
+          },
+          "galleryImages": {
+            "type": "array",
+            "description": "Gallery images URLs",
+            "example": [
+              "https://example.com/img1.png",
+              "https://example.com/img2.png"
+            ],
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -3356,81 +3577,6 @@
           "cancelUrl",
           "returnUrl",
           "subscriptionId"
-        ]
-      },
-      "CreateCompanyRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 2
-          },
-          "type": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string",
-            "minLength": 1
-          },
-          "phone": {
-            "type": "string",
-            "pattern": "^\\+?[1-9]\\d{1,14}$"
-          },
-          "businessName": {
-            "type": "string"
-          },
-          "rut": {
-            "type": "string",
-            "maxLength": 20,
-            "minLength": 16
-          },
-          "DV": {
-            "type": "string",
-            "maxLength": 3,
-            "minLength": 1
-          },
-          "foundedDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "primaryActivity": {
-            "type": "string"
-          },
-          "branchCount": {
-            "type": "integer",
-            "format": "int32",
-            "minimum": 0
-          },
-          "province": {
-            "type": "string",
-            "minLength": 1
-          },
-          "district": {
-            "type": "string",
-            "minLength": 1
-          },
-          "address": {
-            "type": "string",
-            "minLength": 1
-          },
-          "website": {
-            "type": "string",
-            "pattern": "^(https?://)?(www\\.)?[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.[a-zA-Z]{2,6}(\\.[a-zA-Z]{2,6})?$"
-          },
-          "description": {
-            "type": "string",
-            "maxLength": 500,
-            "minLength": 0
-          }
-        },
-        "required": [
-          "address",
-          "district",
-          "email",
-          "name",
-          "province",
-          "type"
         ]
       },
       "CompanyViewsResponseDto": {
@@ -3949,6 +4095,53 @@
             "format": "int64",
             "description": "Public views count",
             "example": 0
+          },
+          "valid": {
+            "type": "string",
+            "description": "Validation status",
+            "enum": [
+              "VERIFIED",
+              "REJECTED",
+              "PENDING_VERIFICATION",
+              "SUSPENDED"
+            ],
+            "example": "VERIFIED"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date",
+            "example": "2023-01-01"
+          }
+        }
+      },
+      "PublicCompanySubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "string",
+            "enum": [
+              "GRATIS",
+              "ECONOMICO_ANUAL",
+              "PREMIUM_ANUAL",
+              "GOLD_ANUAL",
+              "ECONOMICO_MENSUAL",
+              "PREMIUM_MENSUAL",
+              "GOLD_MENSUAL"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "EXPIRED",
+              "CANCELLED",
+              "SUSPENDED",
+              "PENDING_PAYMENT"
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
           }
         }
       }
