@@ -28,12 +28,12 @@
       "description": "Endpoints for receiving payment processor callbacks"
     },
     {
-      "name": "Role Management",
-      "description": "Endpoints for managing user roles"
-    },
-    {
       "name": "Company",
       "description": "Company management API"
+    },
+    {
+      "name": "Role Management",
+      "description": "Endpoints for managing user roles"
     },
     {
       "name": "Subscriptions",
@@ -1596,6 +1596,54 @@
         ]
       }
     },
+    "/api/companies/admin/{id}/verify": {
+      "post": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "Admin: verify company",
+        "description": "Verify a company as admin (sets status to VERIFIED)",
+        "operationId": "adminVerifyCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/auth/register": {
       "post": {
         "tags": [
@@ -2226,6 +2274,102 @@
           },
           "403": {
             "description": "Forbidden - Not company owner",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/companies/admin/{id}/deactivate": {
+      "patch": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "Admin: deactivate company",
+        "description": "Deactivate a company (admin)",
+        "operationId": "adminDeactivateCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company deactivated successfully",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/companies/admin/{id}/activate": {
+      "patch": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "Admin: activate company",
+        "description": "Activate a company (admin)",
+        "operationId": "adminActivateCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company activated successfully",
             "content": {
               "*/*": {
                 "schema": {
@@ -2966,6 +3110,40 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/companies/admin/{id}": {
+      "delete": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "Admin: delete company",
+        "description": "Permanently delete a company",
+        "operationId": "adminDeleteCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Company deleted successfully"
+          },
+          "404": {
+            "description": "Company not found"
           }
         },
         "security": [
@@ -3813,6 +3991,12 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
           "size": {
             "type": "integer",
             "format": "int32"
@@ -3829,12 +4013,6 @@
           },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
-          },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
           },
           "numberOfElements": {
             "type": "integer",
