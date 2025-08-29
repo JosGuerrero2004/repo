@@ -2252,6 +2252,60 @@
         ]
       }
     },
+    "/api/users/statistics": {
+      "get": {
+        "tags": [
+          "User Management"
+        ],
+        "summary": "Get users statistics",
+        "description": "Returns total number of users and list of their emails",
+        "operationId": "getUserStatistics",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserStatisticsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/subscriptions/current": {
       "get": {
         "tags": [
@@ -2490,6 +2544,33 @@
             }
           }
         }
+      }
+    },
+    "/api/companies/statistics": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "Get companies statistics",
+        "description": "Returns total companies, active companies and total profile views",
+        "operationId": "getCompanyStatistics",
+        "responses": {
+          "200": {
+            "description": "Statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyStatisticsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/companies/search": {
@@ -3439,6 +3520,11 @@
             "format": "int64",
             "description": "Public views count",
             "example": 0
+          },
+          "canUsePremiumFeatures": {
+            "type": "boolean",
+            "description": "Can use premium features",
+            "example": true
           }
         }
       },
@@ -3727,12 +3813,6 @@
           "pageable": {
             "$ref": "#/components/schemas/PageableObject"
           },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
-          },
           "size": {
             "type": "integer",
             "format": "int32"
@@ -3749,6 +3829,12 @@
           },
           "sort": {
             "$ref": "#/components/schemas/SortObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
           },
           "numberOfElements": {
             "type": "integer",
@@ -3796,6 +3882,21 @@
           },
           "empty": {
             "type": "boolean"
+          }
+        }
+      },
+      "UserStatisticsResponse": {
+        "type": "object",
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "emails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -3919,6 +4020,23 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "CompanyStatisticsResponseDto": {
+        "type": "object",
+        "properties": {
+          "totalCompanies": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "activeCompanies": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalViews": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -4109,7 +4227,7 @@
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "description": "Creation date",
             "example": "2023-01-01"
           }
